@@ -1,38 +1,38 @@
-document.addEventListener('DOMContentLoaded', function() {
-    const sections = document.querySelectorAll('.gallery-section');
-    
-    // Create dots container
-    const dotsContainer = document.createElement('div');
-    dotsContainer.classList.add('dots');
-    document.body.appendChild(dotsContainer);
+       // Gallery navigation functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const dots = document.querySelectorAll('.dot');
+            const sections = document.querySelectorAll('.gallery-section');
+            
+            dots.forEach((dot, index) => {
+                dot.addEventListener('click', function() {
+                    // Remove active class from all dots
+                    dots.forEach(d => d.classList.remove('active'));
+                    // Add active class to clicked dot
+                    this.classList.add('active');
+                    
+                    // Scroll to corresponding section
+                    sections[index].scrollIntoView({ 
+                        behavior: 'smooth' 
+                    });
+                });
+            });
 
-    // Create dots
-    sections.forEach((_, index) => {
-        const dot = document.createElement('div');
-        dot.classList.add('dot');
-        dot.addEventListener('click', () => scrollToSection(index));
-        dotsContainer.appendChild(dot);
-    });
+            // Update active dot on scroll
+            window.addEventListener('scroll', function() {
+                let current = '';
+                sections.forEach((section, index) => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.clientHeight;
+                    if (window.pageYOffset >= sectionTop - sectionHeight / 2) {
+                        current = index;
+                    }
+                });
 
-    const dots = dotsContainer.querySelectorAll('.dot');
-
-    function scrollToSection(index) {
-        sections[index].scrollIntoView({ behavior: 'smooth' });
-    }
-
-    function updateActiveDot() {
-        const scrollPosition = window.scrollY;
-        const windowHeight = window.innerHeight;
-
-        sections.forEach((section, index) => {
-            const rect = section.getBoundingClientRect();
-            if (rect.top <= windowHeight/2 && rect.bottom >= windowHeight/2) {
-                dots.forEach(dot => dot.classList.remove('active'));
-                dots[index].classList.add('active');
-            }
+                dots.forEach((dot, index) => {
+                    dot.classList.remove('active');
+                    if (index === current) {
+                        dot.classList.add('active');
+                    }
+                });
+            });
         });
-    }
-
-    window.addEventListener('scroll', updateActiveDot);
-    updateActiveDot();
-});
